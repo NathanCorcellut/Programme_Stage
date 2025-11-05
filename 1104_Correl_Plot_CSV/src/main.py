@@ -71,7 +71,7 @@ def generateGraphsFromXYLists(XYList, nameOfOutputPathAndName):
     for graph in XYList:
         label, X, Y = graph
         #Graphs
-        plt.plot(X, Y)
+        plt.scatter(X, Y, s=1)
         plt.legend(label)
 
     #Ajout des titres et de la grille
@@ -83,7 +83,15 @@ def generateGraphsFromXYLists(XYList, nameOfOutputPathAndName):
     #Sauvegarde du résultat 
     plt.savefig(nameOfOutputPathAndName) #sous le nom "Q5-loi_rang-taille_terres.png"
     plt.close() #Fermeture 'propre' du graphe
-    
+
+
+def calculateMeanVelocity(PositionValues, VelocityValues):
+    sum = 0
+    for i in range(len(PositionValues)-1):
+        sum += (VelocityValues[i] + VelocityValues[i+1]) * (PositionValues[i+1] - PositionValues[i]) /2.0
+    mean_velocity = sum / (PositionValues[-1] - PositionValues[0])   
+    return mean_velocity
+
 contenu = generateTypedContentFromExcelFile("./data/24A010072_20241015_090520_USZ_MESS.csv", 1, 2)
 
 liste = extractXYListsFromTxtFile("./data/velocity_captors.txt")
@@ -94,3 +102,20 @@ c2 = extractXYListsFromTxtFile("./data/velocity_profile.txt")
 
 generateGraphsFromXYLists(c2, "./output/3plotsofprofile.png")
 
+label_1down, X_1down, Y_1down = liste[0]
+vitesse_moyenne_1down = calculateMeanVelocity(X_1down, Y_1down)
+
+print("La vitesse moyenne le long de {}, vaut {} ".format(label_1down[0], vitesse_moyenne_1down))
+
+label_2down, X_2down, Y_2down = liste[1]
+vitesse_moyenne_2down = calculateMeanVelocity(X_2down, Y_2down)
+
+print("La vitesse moyenne le long de {}, vaut {} ".format(label_2down[0], vitesse_moyenne_2down))
+
+label_mid, X_mid, Y_mid = c2[2]
+vit_moy_mid = calculateMeanVelocity(X_mid, Y_mid)
+
+print("La vitesse moyenne le long de {}, vaut {} ".format(label_mid[0], vit_moy_mid))
+
+for i in range(0, 360):
+    print(" --- multipliée par cos({} deg) =".format(i), vit_moy_mid * math.cos(i * 3.14159235897932384626/180))
